@@ -18,7 +18,7 @@ class SelectProfile extends HTMLElement {
         this.shadow.innerHTML += this.selectProfile()
         this.shadow.addEventListener('click', function (e) {
 
-            if(e.path[0].classList.contains("create-profile")) {
+            if(e.target.classList.contains("create-profile")) {
                 this.createNewProfile()
             }       
 
@@ -110,10 +110,10 @@ class SelectProfile extends HTMLElement {
     selectProfile() {
         const profileList = this.storageProfile.getStorageParse()
         
-        if(!this.storageProfile.verify()) {
-            this.storageProfile.setNewData("[]") 
-            document.location.reload()
-        }
+        // if(!this.storageProfile.verify()) {
+        //     this.storageProfile.setNewData("[]") 
+        //     document.location.reload()
+        // }
 
         let htmlProfile = ''
 
@@ -173,8 +173,8 @@ class SelectProfile extends HTMLElement {
 
         const stringifyProfileList = JSON.stringify(newProfileList)
         this.storageProfile.setNewData(stringifyProfileList)
-        this.shadow.innerHTML += `<alert-box text="Profile criado com sucesso. Atualizando a página..." type="sucess"></alert-box>`
-        setTimeout(() => document.location.reload(), 3000);
+        document.body.innerHTML += `<alert-box text="Profile criado com sucesso. Atualizando a página..." type="sucess"></alert-box>`
+        setTimeout(() => document.location.reload(), 1000);
         // document.location.reload()
         
         console.log('Create New Profile')

@@ -88,7 +88,7 @@ class ProfileRoles extends HTMLElement {
             `
             if(e.icon != '') {
                 e.icon.forEach(i => {
-                    const icon = i.replace(' ', '')
+                    const icon = i.trim()
                     roleText += `<img src="${icon}" class="icon-img" width="16" height="16">`
                 })
             }

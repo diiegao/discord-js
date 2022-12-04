@@ -45,7 +45,9 @@ class ProfileContent extends HTMLElement {
             }
 
             .profile-name {
-                font-family: "whitneybold","Helvetica Neue",Helvetica,Arial,sans-serif;
+                /*font-family: "whitneybold","Helvetica Neue",Helvetica,Arial,sans-serif;*/
+                font-family: var(--font-primary);
+                font-weight: 600;
                 font-size: 20px;
                 line-height: 24px;
                 word-break: break-word;
@@ -54,9 +56,7 @@ class ProfileContent extends HTMLElement {
             }
 
             .profile-hash {
-                /*font-family: "Franklin Gothic Medium";
-                font-weight: bold;
-                font-size: 19px;*/
+                font-weight: 600;
                 color: ${this.profileById.theme.style == 'light' ? '#575758' : '#b9bbbe'};
             }
 
@@ -70,7 +70,8 @@ class ProfileContent extends HTMLElement {
             
             h2 {
                 display: flex;
-                font-family: "whitneybold","Helvetica Neue",Helvetica,Arial,sans-serif;
+                /*font-family: "whitneybold","Helvetica Neue",Helvetica,Arial,sans-serif;*/
+                font-family: var(--font-primary);
                 font-size: 12px;
                 line-height: 16px;
                 font-weight: 700;
@@ -84,10 +85,12 @@ class ProfileContent extends HTMLElement {
             }
 
             .about-me-content {
-                font-family: ${this.profileById.theme.style == 'light' ? '"whitneymedium","Helvetica Neue",Helvetica,Arial,sans-serif' : '"whitneylight","whitneymedium","Helvetica Neue",Helvetica,Arial,sans-serif'};
+                font-family: var(--font-primary);
+                /*font-family: ${this.profileById.theme.style == 'light' ? '"whitneymedium","Helvetica Neue",Helvetica,Arial,sans-serif' : '"whitneylight","whitneymedium","Helvetica Neue",Helvetica,Arial,sans-serif'};*/
                 font-size: 14px;
                 line-height: 18px;
                 font-weight: 400;
+                color: ${this.profileById.theme.style == 'light' ? '#333333' : '#dcddde'};
             }
 
             .profile-date {
@@ -104,7 +107,8 @@ class ProfileContent extends HTMLElement {
             }
 
             .profile-date > .profile-since {
-                font-family: "whitneymedium","Helvetica Neue",Helvetica,Arial,sans-serif;
+                /*font-family: "whitneymedium","Helvetica Neue",Helvetica,Arial,sans-serif;*/
+                font-family: var(--font-primary);
                 font-size: 14px;
                 line-height: 18px;
                 color: ${this.profileById.theme.style == 'light' ? '#333333' : '#dcddde'};
@@ -141,7 +145,8 @@ class ProfileContent extends HTMLElement {
             }
 
             .note-text {
-                font-family: ${this.profileById.theme.style == 'light' ? '"whitneymedium","Helvetica Neue",Helvetica,Arial,sans-serif' : '"whitneylight","whitneymedium","Helvetica Neue",Helvetica,Arial,sans-serif'};
+                /*font-family: ${this.profileById.theme.style == 'light' ? '"whitneymedium","Helvetica Neue",Helvetica,Arial,sans-serif' : '"whitneylight","whitneymedium","Helvetica Neue",Helvetica,Arial,sans-serif'};*/
+                font-family: var(--font-primary);
                 width: 100%;
                 height: 36px;
                 max-height: 88px;

@@ -89,10 +89,10 @@ class ServerSideBar extends HTMLElement {
 
     renderButtonList() {
 
-        if(!this.storage.verify()) {
-            this.storage.setNewData("[]") 
-            document.location.reload()
-        }
+        // if(!this.storage.verify()) {
+        //     this.storage.setNewData("[]") 
+        //     document.location.reload()
+        // }
 
         const list = this.storage.getStorageParse()
 

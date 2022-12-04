@@ -19,7 +19,7 @@ class SelectProfileBox extends HTMLElement {
         
         this.shadow.addEventListener('click', function (e) {
 
-            if(e.path[0].classList.contains('remove-button')){
+            if(e.target.classList.contains('remove-button')){
                 const profileById = this.storageProfile.getById(this.getAttribute('profile-id'))
                 const confirmRemove = confirm(`Deseja remover o profile: (${this.getAttribute('profile-id')}) - ${profileById.nickname}`)
                 confirmRemove ? this.removeProfile(this.getAttribute('profile-id')) : ''
@@ -135,8 +135,8 @@ class SelectProfileBox extends HTMLElement {
 
         const newListStringify = JSON.stringify(newList)
         this.storageProfile.setNewData(newListStringify)
-        this.shadow.innerHTML += `<alert-box text="Profile removido com sucesso. Atualizando a página..." type="sucess"></alert-box>`
-        setTimeout(() => document.location.reload(), 3000);
+        document.body.innerHTML += `<alert-box text="Profile removido com sucesso. Atualizando a página..." type="sucess"></alert-box>`
+        setTimeout(() => document.location.reload(), 1000);
         // document.location.reload()
         return
     }

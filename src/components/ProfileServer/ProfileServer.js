@@ -17,9 +17,8 @@ class ProfileServer extends HTMLElement {
         this.storageServer = new LocalStorageBd('localServerList')
         this.sessionProfile = new LocalSession('profileSelected')
         this.profileId = this.getAttribute('profile-id')
-        this.profileById = this.storageProfile.getById(this.sessionProfile.getSession())
-        this.serverById = this.storageServer.getById(this.getAttribute('profile-id'))
-
+        this.profileById = this.storageProfile.getById(Number(this.sessionProfile.getSession()))
+        this.serverById = this.storageServer.getById(Number(this.getAttribute('profile-id')))
         this.bgPrimary = this.profileById.theme.bgPrimary ? this.profileById.theme.bgPrimary : '#2c2c2c'
         this.bgSecondary = this.profileById.theme.bgSecondary ? this.profileById.theme.bgSecondary : '#2c2c2c'
 

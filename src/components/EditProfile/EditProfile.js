@@ -1,5 +1,6 @@
 import LocalSession from "../../modules/LocalSession"
 import LocalStorageBd from "../../modules/LocalStorageBd"
+import ImgBB from "../../modules/ImgBB"
 import '../../components/AlertBox/AlertBox'
 
 class EditProfile extends HTMLElement {
@@ -13,6 +14,7 @@ class EditProfile extends HTMLElement {
     build() {    
         this.storageProfile = new LocalStorageBd('localProfileList')
         this.session = new LocalSession('profileSelected')
+        const api = new ImgBB()
 
         this.profileInfo = this.storageProfile.getById(this.session.getSession())
 
@@ -20,8 +22,30 @@ class EditProfile extends HTMLElement {
         this.shadow.appendChild(this.header())
         this.shadow.appendChild(this.content())
         this.shadow.addEventListener('click', function(e) {
-            if(e.path[0].classList.contains('edit-button')) {
+            if(e.target.classList.contains('edit-button')) {
                 this.sendNewProfile()
+                return
+            }
+        }.bind(this))
+
+        this.shadow.addEventListener('change', async function(e) {
+            if(e.target.classList.contains('img-avatar')) {
+                const avatarImgInput = this.shadow.querySelector('#avatar-img')
+
+                avatarImgInput.value = 'enviando...'
+                const response = await api.generateLinkImg(e.target.files[0], 'profile-avatar')
+                console.log('avatar', response)
+                avatarImgInput.value = response
+                return
+            }
+
+            if(e.target.classList.contains('img-banner')) {
+                const bannerImgInput = this.shadow.querySelector('#banner-img')
+
+                bannerImgInput.value = 'enviando...'
+                const response = await api.generateLinkImg(e.target.files[0], 'profile-banner')
+                console.log('banner', response)
+                bannerImgInput.value = response
                 return
             }
         }.bind(this))
@@ -92,6 +116,19 @@ class EditProfile extends HTMLElement {
                 height: 1px;
                 background-color: #363940;
                 margin: 20px 0;
+            }
+
+            label.send-img-api {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 35px;
+                padding: 0 10px;
+                font-weight: 500;
+                background-color: #9ee37d;
+                color: #1d380e;
+                border-left: 1px solid #63c132;
+                border-radius: 0 5px 5px 0;
             }
 
             /* */
@@ -536,6 +573,7 @@ class EditProfile extends HTMLElement {
                 <span>
                     <a href="https://postimages.org/" target="_blank">PostImage</a>
                     <a href="https://imgbb.com/" target="_blank">ImgBB</a>
+                    <a href="https://jpg.church/" target="_blank">jpgChurch</a>
                 </span>
             </div>`
 
@@ -544,6 +582,8 @@ class EditProfile extends HTMLElement {
                 <span style="display: block; margin-bottom: 5px;">Avatar</span>
                 <div class="input-bg-color"> 
                     <input type="text" id="avatar-img" name="avatar-img" class="text-box" placeholder="Link da imagem do avatar." value="${this.profileInfo.urlAvatar ? this.profileInfo.urlAvatar : ''}">
+                    <label for="img-avatar" class="send-img-api">Upload</label>
+                    <input type="file" name="img-avatar" id="img-avatar" class="img-avatar" accept="image/*" style="display: none;">
                 </div>
             </div>`
 
@@ -552,6 +592,8 @@ class EditProfile extends HTMLElement {
                 <span style="display: block; margin-bottom: 5px;">Banner</span>
                 <div class="input-bg-color"> 
                     <input type="text" id="banner-img" name="banner-img" class="text-box" placeholder="Link da imagem do banner." value="${this.profileInfo.urlBanner ? this.profileInfo.urlBanner : ''}">
+                    <label for="img-banner" class="send-img-api">Upload</label>
+                    <input type="file" name="img-banner" id="img-banner" class="img-banner" accept="image/*" style="display: none;">
                 </div>
             </div>`
 
@@ -653,8 +695,8 @@ class EditProfile extends HTMLElement {
         storage.filter(e => e.id != this.session.getSession() ? newList.push(e) : newList.push(changeProfile))
         const newListStringify = JSON.stringify(newList)
         this.storageProfile.setNewData(newListStringify)
-        this.shadow.innerHTML += `<alert-box text="Profile editado com sucesso. Atualizando a página..." type="sucess"></alert-box>`
-        setTimeout(() => document.location.reload(), 2000);
+        document.body.innerHTML += `<alert-box text="Profile editado com sucesso. Atualizando a página..." type="sucess"></alert-box>`
+        setTimeout(() => document.location.reload(), 1000);
         // document.location.reload()
         return
 

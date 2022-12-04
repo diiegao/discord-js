@@ -18,7 +18,7 @@ class ManagerServer extends HTMLElement {
         this.shadow.appendChild(this.editButton())
         this.shadow.appendChild(this.removeButton())
         this.shadow.addEventListener('click', function(e){
-            if(e.path[0].classList.contains('remove')){
+            if(e.target.classList.contains('remove')){
                 console.log('Remover Server ' + this.getId)
                 const confirmRemove = confirm(`Deseja excluir o server: (${this.getId}) - ${this.serverById.name}`)
                 confirmRemove ? this.removeServer() : ''
@@ -100,8 +100,8 @@ class ManagerServer extends HTMLElement {
 
         const newListStringify = JSON.stringify(newList)
         this.storage.setNewData(newListStringify)
-        this.shadow.innerHTML += `<alert-box text="Server removido com sucesso. Atualizando a página..." type="sucess"></alert-box>`
-        setTimeout(() => document.location = '/', 3000);
+        document.body.innerHTML += `<alert-box text="Server removido com sucesso. Atualizando a página..." type="sucess"></alert-box>`
+        setTimeout(() => document.location = '/', 1000);
         // document.location = '/'
     }
 }

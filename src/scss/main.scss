@@ -1,4 +1,5 @@
 @import './colors';
+@import './newFont';
 
 @font-face {
     font-family: 'whitneybold';
@@ -6,6 +7,7 @@
          url('/fonts/whitneybold.woff') format('woff');
     font-weight: normal;
     font-style: normal;
+    font-display: fallback;
 }
 
 @font-face {
@@ -14,6 +16,7 @@
          url('/fonts/whitneylight.woff') format('woff');
     font-weight: normal;
     font-style: normal;
+    font-display: fallback;
 }
 
 @font-face {
@@ -22,10 +25,12 @@
          url('/fonts/whitneymedium.woff') format('woff');
     font-weight: normal;
     font-style: normal;
+    font-display: fallback;
 }
 
 html, body {
-    font-family: "whitneylight","Helvetica Neue",Helvetica,Arial,sans-serif;
+    // font-family: "whitneylight","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-family: var(--font-primary);
     color: $text-color-2;
     background-color: $dark-color-1;
 }

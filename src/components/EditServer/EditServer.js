@@ -1,5 +1,6 @@
 import LocalStorageBd from "../../modules/LocalStorageBd"
 import '../../components/AlertBox/AlertBox'
+import ImgBB from "../../modules/ImgBB"
 
 class EditServer extends HTMLElement {
     constructor() {
@@ -13,6 +14,8 @@ class EditServer extends HTMLElement {
         this.storage = new LocalStorageBd('localServerList')
         this.getId = this.getAttribute('server-id')
         this.serverInfo = this.storage.getById(this.getId)
+        this.groupRolesCount = 0
+        const api = new ImgBB()
 
         this.shadow.appendChild(this.style())
         this.shadow.appendChild(this.header())
@@ -20,24 +23,52 @@ class EditServer extends HTMLElement {
 
         this.shadow.addEventListener('click', function(e) {
             /*BUTTON SAVE SERVER*/
-            if(e.path[0].classList.contains('save-server')){
+            if(e.target.classList.contains('save-server')){
                 // this.createNewServer()
                 this.editServer()
                 return
             }
 
             /*BUTTON REMOVE GROUP ROLE*/
-            else if(e.path[0].classList.contains('button-remove-role')){
+            else if(e.target.classList.contains('button-remove-role')){
                 this.removeGroupRole(e)
                 return
             }
 
             /*BUTTON ADD NEW ROLE*/
-            else if(e.path[0].classList.contains('button-add-role')){
+            else if(e.target.classList.contains('button-add-role')){
                 this.addNewRole()
                 return
             }
 
+        }.bind(this))
+
+        this.shadow.addEventListener('change', async function(e){
+            if(e.target.classList.contains('img-server')) {
+                const inputServerIcon = this.shadow.querySelector('#server-icon')
+
+                inputServerIcon.value = 'enviando...'
+                const response = await api.generateLinkImg(e.target.files[0], 'server-icon')
+                inputServerIcon.value = response
+                return
+            }
+
+            if(e.target.classList.contains('upload-role-icons')) {
+                const getTextArea = e.target.parentElement.querySelector('textarea[class=textarea-box]')
+                const getLabel = e.target.parentElement.querySelector('label')
+                const filesLink = new Array()
+                getLabel.innerHTML = 'Enviando...'
+                for(let file of e.target.files) { 
+                    const response = await api.generateLinkImg(file, `role-icon`)
+                    filesLink.push(response)
+                }
+
+                const textAreaToArray = getTextArea.value.split(',')
+                textAreaToArray.forEach(t => t !== '' ? filesLink.push(t.trim()) : '')
+                getTextArea.value = filesLink
+                getLabel.innerHTML = 'Upload'
+                return
+            }
         }.bind(this))
     }
 
@@ -130,6 +161,19 @@ class EditServer extends HTMLElement {
                 outline: 1px solid #363940;
             }
 
+            label.send-img-api {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 35px;
+                padding: 0 10px;
+                font-weight: 500;
+                background-color: #9ee37d;
+                color: #1d380e;
+                border-left: 1px solid #63c132;
+                border-radius: 0 5px 5px 0;
+            }
+
             .divisor {
                 width: 100%;
                 height: 1px;
@@ -204,6 +248,19 @@ class EditServer extends HTMLElement {
                 text-decoration: underline;
                 margin-right: 5px;
             }
+
+            .label-button {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 50px;
+                padding: 0px 10px;
+                color: #1d380e;
+                font-weight: 500;
+                background-color: #9ee37d;
+                border-left: 1px solid #63c132;
+                border-radius: 0 5px 5px 0;
+            }
         `
         return style
     }
@@ -264,6 +321,7 @@ class EditServer extends HTMLElement {
                 <span>
                     <a href="https://postimages.org/" target="_blank">PostImage</a>
                     <a href="https://imgbb.com/" target="_blank">ImgBB</a>
+                    <a href="https://jpg.church/" target="_blank">jpgChurch</a>
                 </span>
             </div>`
 
@@ -298,6 +356,8 @@ class EditServer extends HTMLElement {
                 <span style="display: block; margin-bottom: 5px;">Link do Ícone do Server</span>
                 <div class="input-bg-color"> 
                     <input type="text" id="server-icon" name="server-icon" class="text-box" placeholder="Link do Ícone do Server" value="${this.serverInfo.icon}">
+                    <label for="img-server" class="send-img-api">Upload</label>
+                    <input type="file" name="img-server" id="img-server" class="img-server" accept="image/*" style="display: none;">
                 </div>
             </div>`
 
@@ -323,22 +383,21 @@ class EditServer extends HTMLElement {
 
         const getRoles = this.serverInfo.roles
 
-        const setRoleID = () => parseInt(Date.now() * Math.random())
-        const tryRoleID = new Array()
-
         getRoles.forEach((role, i) => {
-            tryRoleID[i] = setRoleID()
-
+            this.groupRolesCount++
+            
             rightContent.innerHTML += /*html*/`
-                <div class="roles-content" id="role-group-${tryRoleID[i]}">
+                <div class="roles-content">
                 <div class="divisor"></div>
                     <div class="input-bg-color">
                         <input type="text" id="server-role-name" name="server-role-name" class="text-box" style="width:250px;" placeholder="Nome do Grupo" value="${role.name}">
                         <input type="text" id="server-role-color" name="server-role-color" class="text-box" style="width:100px; border-left: 1px solid #40454b;" placeholder="Cor do Grupo" value="${role.color}">
-                        <button class="button-remove-role" role-id="${tryRoleID[i]}">X</button>
+                        <button class="button-remove-role">X</button>
                     </div>
                     <div class="input-bg-color" style="margin-top: 5px;">
                         <textarea id="server-role-icons" name="server-role-icons" class="textarea-box" placeholder="Ícones separado por virgula.. exemplo: \nhttp://test.com, http://www.test.com">${role.icon}</textarea>
+                        <label for="upload-role-icons-${this.groupRolesCount}" class="label-button">Upload</label>
+                        <input type="file" name="upload-role-icons" id="upload-role-icons-${this.groupRolesCount}" class="upload-role-icons" style="display: none;" accept="image/*" multiple>
                     </div>
                 </div>
             `
@@ -365,7 +424,7 @@ class EditServer extends HTMLElement {
         this.shadow.querySelector('#server-since-year').value == '' ||
         this.shadow.querySelector('#server-icon').value == '') {
             // alert('Preencha os campos para adicionar um novo server.')
-            this.shadow.innerHTML += `<alert-box text="Preencha os campos para adicionar um novo server." type="error"></alert-box>`
+            document.body.innerHTML += `<alert-box text="Preencha os campos para adicionar um novo server." type="error"></alert-box>`
             return
         }
 
@@ -373,7 +432,7 @@ class EditServer extends HTMLElement {
             this.shadow.querySelector('#server-since-day').value != "" ? this.shadow.querySelector('#server-since-day').value : '01', 
             this.shadow.querySelector('#server-since-month').value != "" ? (this.shadow.querySelector('#server-since-month').value - 1) : '00', 
             this.shadow.querySelector('#server-since-year').value != "" ? this.shadow.querySelector('#server-since-year').value : '2000')
-        const serverId = this.getId
+        const serverId = Number(this.getId)
         const getRoles = this.shadow.querySelectorAll('.roles-content')
         const roles = new Array()
         getRoles.forEach(role => {
@@ -384,7 +443,7 @@ class EditServer extends HTMLElement {
             const removeBreakLine = text => text.replace(/\n\r?/g, '')
 
             getIconLink.forEach(icon => {
-                iconLink.push(removeBreakLine(icon))
+                iconLink.push(removeBreakLine(icon.trim()))
             })
 
             const rolesObj = {
@@ -404,52 +463,33 @@ class EditServer extends HTMLElement {
             roles: roles
         }
 
-        // const newList = new Array()
-        // const storage = this.storageProfile.getStorageParse()
-        // storage.filter(e => e.id != this.session.getSession() ? newList.push(e) : newList.push(changeProfile))
-        // const newListStringify = JSON.stringify(newList)
-        // this.storageProfile.setNewData(newListStringify)
-        // document.location.reload()
-
         const newList = new Array()
         const storageParse = this.storage.getStorageParse()
         storageParse.filter(e => e.id != serverId ? newList.push(e) : newList.push(newServer))
         const newListStringify = JSON.stringify(newList)
         this.storage.setNewData(newListStringify)
-        this.shadow.innerHTML += `<alert-box text="Server editado com sucesso. Atualizando a página..." type="sucess"></alert-box>`
-        setTimeout(() => document.location.reload(), 2000);
-
-        // const newList = new Array()
-        // this.serverInfo.forEach(server => {
-        //     newList.push(server)
-        // })
-        // newList.push(newServer)
-        // const listString = JSON.stringify(newList)
-        // this.storage.setNewData(listString)
-        // document.location.reload()
-
-        // console.log(newList)
+        document.body.innerHTML += `<alert-box text="Server editado com sucesso. Atualizando a página..." type="sucess"></alert-box>`
+        setTimeout(() => document.location.reload(), 1000);
     }
 
     addNewRole() {
-        const setRoleID = () => parseInt(Date.now() * Math.random())
-        const tryRoleID = new Array()
-        tryRoleID.push(setRoleID())
+        this.groupRolesCount++
         const content = /*html*/`
             <div class="divisor"></div>
             <div class="input-bg-color">
                 <input type="text" id="server-role-name" name="server-role-name" class="text-box" style="width:250px;" placeholder="Nome do Grupo">
                 <input type="text" id="server-role-color" name="server-role-color" class="text-box" style="width:100px; border-left: 1px solid #40454b;" placeholder="Cor do Grupo">
-                <button class="button-remove-role" role-id="${tryRoleID[0]}">X</button>
+                <button class="button-remove-role">X</button>
             </div>
             <div class="input-bg-color" style="margin-top: 5px;">
                 <textarea id="server-role-icons" name="server-role-icons" class="textarea-box" placeholder="Ícones separado por virgula.. exemplo: \nhttp://test.com, http://www.test.com"></textarea>
+                <label for="upload-role-icons-${this.groupRolesCount}" class="label-button">Upload</label>
+                <input type="file" name="upload-role-icons" id="upload-role-icons-${this.groupRolesCount}" class="upload-role-icons" style="display: none;" accept="image/*" multiple>
             </div>`
 
         const newDiv = document.createElement('div')
         newDiv.setAttribute('class', 'roles-content')
         newDiv.setAttribute('style', 'margin-top: 10px;')
-        newDiv.setAttribute('id', `role-group-${tryRoleID[0]}`)
         newDiv.innerHTML = content
 
         const getAppend = this.shadow.querySelector('.form-right-content')
@@ -458,14 +498,10 @@ class EditServer extends HTMLElement {
     }
 
     removeGroupRole(e) {
-        const getId = e.path[0].getAttribute("role-id")
-        const getGroup = this.shadow.getElementById(`role-group-${getId}`)
         const countInput = this.shadow.querySelectorAll('.roles-content')
-        if(countInput.length <= 1) {
-            return
-        } else {
-            getGroup.remove()
-        }
+        const getGroupParent = e.target.parentElement.parentElement
+        if(countInput.length <= 1) return
+        getGroupParent.remove()       
     }
 
 }
